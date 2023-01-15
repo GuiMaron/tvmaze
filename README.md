@@ -16,7 +16,7 @@ Go into the cloned directory `tvmaze`
 
 
 
-# How to run with Docker
+# How to run with Docker ([http://docker.com](docker.com))
 
 **Development environment**
 
@@ -24,6 +24,10 @@ Go into the cloned directory `tvmaze`
 
 And access it in the browser
 ### [http://localhost:3000](http://localhost:3000)
+
+To restart it
+
+###  `docker-compose -f docker-compose-dev.yml down && docker-compose -f docker-compose-dev.yml up --build`
 
 **Production environment**
 

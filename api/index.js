@@ -19,7 +19,7 @@ app.use(bodyParser.json())
 // Express handling
 app.get('/', (request, response) => 
 {
-    response.status(400).send('TVMaze API')
+    response.status(200).send('TVMaze API')
 })
 
 

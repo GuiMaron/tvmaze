@@ -1,0 +1,50 @@
+.App .ShowsList .ShowsList-PaginationBar {
+    height: 60px;
+}
+
+.App .ShowsList .ShowsList-PaginationBar .ShowsList-FastNavigationButtonWrapper {
+    width:  75px;
+}
+
+@media (min-width: 601px)
+{
+    .App .ShowsList .ShowsList-PaginationBar .ShowsList-FastNavigationButtonWrapper {
+        width:  150px;
+    }
+}
+
+.App .ShowsList .ShowsList-PaginationBar > div {
+    min-height: 60px;
+}
+
+.App .ShowsList .ShowsList-PaginationBar .ShowsList-PageButtonWrapper, 
+.App .ShowsList .ShowsList-PaginationBar .ShowsList-PageButtonWrapper .ShowsList-list {
+    width:  calc(100% - 150px);
+}
+
+.App .ShowsList .ShowsList-PaginationBar .ShowsList-PageButtonWrapper { 
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+@media (min-width: 601px)
+{
+    .App .ShowsList .ShowsList-PaginationBar .ShowsList-PageButtonWrapper {
+        padding:    0px;
+        width:      calc(100% - 300px);
+    }
+}
+
+.App .ShowsList .ShowsList-PaginationBar .ShowsList-PageButtonWrapper .ShowsList-PageButtonWrapper-content {
+    max-height: 60px;
+}
+
+.App .ShowsList .ShowsList-PaginationBar .ShowsList-PageButtonWrapper .ShowsList-PageButton {
+    clear:      none;
+    display:    inline-block;
+    width:      50px;
+}
+
+.App .ShowsList .ShowsList-title {
+    height: 45px;
+}

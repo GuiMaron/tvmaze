@@ -4,7 +4,7 @@ import { render, screen } from '@testing-library/react'
 
 import './setupTests'
 
-import App from '../App'
+import App from '../views/App'
 
 
 

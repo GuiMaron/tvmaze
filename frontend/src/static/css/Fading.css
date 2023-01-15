@@ -1,0 +1,32 @@
+
+.App-animate-fadeIn {
+    animation:      fadingIn 666ms;
+    will-change:    opacity;
+}
+
+.App-animate-fadeOf {
+    animation:      fadingIn 666ms;
+    will-change:    opacity;
+}
+
+@keyframes fadingIn 
+{
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes fadingOut
+{
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}

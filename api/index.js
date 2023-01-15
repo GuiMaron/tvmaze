@@ -17,9 +17,9 @@ app.use(bodyParser.json())
 
 
 // Express handling
-app.get('/', (request, response) => 
+app.get('/api', (request, response) => 
 {
-    response.status(200).send('TVMaze API')
+    response.status(200).send('TVMaze API / API')
 })
 
 
@@ -37,12 +37,14 @@ redisClient.on('error',     ((error) => console.error('Redis Client Error', erro
 
 
 
-app.get(`/${ENV.URLS.FULL_SCHEDULE}`, async (request, response) => 
+app.get(`/api/${ENV.URLS.FULL_SCHEDULE}`, async (request, response) => 
 {
     
     response.type('application/json')
 
-    //  Trying to get from cache
+    const abortController   = new AbortController()
+
+    // Trying to get from cache
     let cachedData = await getFromCache(ENV.URLS.FULL_SCHEDULE, response)
 
     if (cachedData) {
@@ -50,13 +52,13 @@ app.get(`/${ENV.URLS.FULL_SCHEDULE}`, async (request, response) =>
     }
 
     //  Trying to get from API
-    let fetchedData = await getFromApi(ENV.URLS.FULL_SCHEDULE, response)
+    let fetchedData = await getFromApi(ENV.URLS.FULL_SCHEDULE, response, abortController)
 
     response.status(200).json(fetchedData)
 
     await cacheData(ENV.URLS.FULL_SCHEDULE, fetchedData)
 
-    return (() => (abortController.abort()))
+     // return (() => (abortController.abort()))
 
 })
 
@@ -67,14 +69,20 @@ async function cacheData (url, data)
 {
 
     //  Caching
-    console.debug('Caching')
+    // console.debug('Caching')
 
     try {
+
+        if (! redisIsConnected) {
+            await redisClient.connect()
+            redisIsConnected = true
+        }
+
         await redisClient.set (url, data)
         // redisPublisher.publish('insert', url)
     }
     catch (exception) {
-        console.error(exception)
+        // console.error(exception)
     }
 
 }
@@ -85,7 +93,7 @@ async function getFromCache (url, response)
     let cachedData 
 
     //  Trying to get from cache
-    console.debug('Retrieving from cache')
+    // console.debug('Retrieving from cache')
 
     try {
 
@@ -98,22 +106,20 @@ async function getFromCache (url, response)
 
     }
     catch (exception) {
-        console.error(exception)
-        return (response.status(500).json({ error: exception }))
+        response.status(500).json({ error: exception })
     }
 
     return (cachedData)
 
 }
 
-async function  getFromApi (url, response)
+async function  getFromApi (url, response, abortController)
 {
 
     let fetchedData 
 
     //  Geting it from TVMaze
-    console.debug('Retrieving from API')
-    const abortController   = new AbortController()
+    // console.debug('Retrieving from API')
 
     try {
 
@@ -126,7 +132,6 @@ async function  getFromApi (url, response)
 
     }
     catch (exception) {
-        console.error(exception)
         return (response.status(500).json({ error: exception }))
     }
 

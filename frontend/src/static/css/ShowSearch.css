@@ -1,0 +1,11 @@
+.App .ShowSearch {
+    margin-top: 20px;
+}
+
+.App .ShowSearch .ShowSearch-form {
+    height: 80px;
+}
+
+.ShowSearch-form-search-button {
+    margin-top: 5px;
+}

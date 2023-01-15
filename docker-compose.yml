@@ -1,0 +1,39 @@
+version:  '3'
+
+services:
+ 
+  api:
+    build:
+      dockerfile: 'Dockerfile'
+      context:    './api'
+    volumes:
+      - './api:/usr/app'
+      - '/usr/app/node_modules'
+    depends_on:
+      - redis
+
+  frontend:
+    build:
+      dockerfile: 'Dockerfile'
+      context:    './frontend'
+    environment:
+      - WDS_SOCKET_PORT=0    
+    volumes:
+      - './frontend:/usr/app'
+      - '/usr/app/node_modules'
+    depends_on:
+      - api
+
+  nginx:
+    build:
+      dockerfile: 'Dockerfile'
+      context:    './nginx'
+    restart:  always
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+      - frontend
+
+  redis:
+    image:  'redis:latest'

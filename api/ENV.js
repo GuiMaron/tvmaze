@@ -16,6 +16,7 @@ module.exports = {
         BASE_URL:       `${process.env.BASE_URL}`
     ,   FULL_SCHEDULE:  `${process.env.FULL_SCHEDULE_URL}`
     ,   SHOW_INFO:      `${process.env.SHOW_INFO_URL}`
+    ,   SHOW_SEARCH :   `${process.env.SHOW_SEARCH_URL}`
     }
 
 ,   APP_CONFIG: {

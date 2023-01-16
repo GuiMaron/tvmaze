@@ -8,6 +8,7 @@ const ENV = {
 ,   URLS: {
         BASE_URL:       `${process.env.REACT_APP_BASE_URL}`
     ,   FULL_SCHEDULE:  `${process.env.REACT_APP_FULL_SCHEDULE_URL}`
+    ,   SHOW_INFO:      `${process.env.REACT_APP_SHOW_INFO_URL}`
     }
 
 ,   PAGINATION: {

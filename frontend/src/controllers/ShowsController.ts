@@ -2,7 +2,7 @@ import ENV from '../ENV'
 
 import Controller, { ControllerProps } from './Controller'
 
-import { Show } from '../models/Show'
+import { Show, isShowImages } from '../models/Show'
 
 
 
@@ -172,6 +172,22 @@ class ShowsController extends Controller
 
     }
 
+    static getShowImage (show : Show) : string
+    {
+
+        const showImage = show?.image || show?._embedded?.show?.image || {}
+
+        if (isShowImages(showImage)) {
+            return (showImage.original || showImage?.medium || '')
+        }
+
+        console.error(`Show with id = {${show.id}} has no defined image`)
+        console.debug(show)
+
+        return ('')
+
+    }
+
     static getShowSchedule (show : Show) : Array<string>
     {
 
@@ -183,6 +199,20 @@ class ShowsController extends Controller
         }
 
         return (showSchwedule.map((weekDay : string) => (weekDay.toLocaleLowerCase())))
+
+    }
+
+    static getShowSite (show : Show) : string
+    {
+
+        const showSite = show?.officialSite || ''
+
+        if (! showSite) {
+            console.error(`Show with id = {${show.id}} has no official site`)
+            console.log(show)
+        }
+
+        return (showSite)
 
     }
 
@@ -219,6 +249,34 @@ class ShowsController extends Controller
 
     }
 
+    static getShowSummary (show : Show) : string 
+    {
+
+        const showSummary = show?.summary || show?._embedded?.show?.summary || ''
+
+        if (! showSummary) {
+            console.error(`Show with id = {${show.id}} has no summary`)
+            console.log(show)
+        }
+
+        return (showSummary)
+
+    }
+
+    static getShowType (show : Show) : string 
+    {
+
+        const showType = show?.type || show?._embedded?.show?.type || ''
+
+        if (! showType) {
+            console.error(`Show with id = {${show.id}} has no type`)
+            console.log(show)
+        }
+
+        return (showType)
+
+    }
+
 
 
     static filterTodayShows (shows : Array<Show>) : Array<Show>
@@ -239,26 +297,6 @@ class ShowsController extends Controller
         })
 
         return (todayShows)
-
-        // const { dayStartTime, dayStart } = Controller.getDateInfo()
-
-        // const todayShows = shows.filter((show : Show) =>
-        // {
-        //     const showAirDate = ShowsController.getShowAirDate(show)
-
-        //     // console.debug('----------')
-        //     // console.debug(show)
-        //     // console.debug(showAirDate)
-        //     // console.debug(+ showAirDate)
-        //     // console.debug('TODAY')
-        //     // console.debug(dayStartTime)
-        //     // console.debug(dayStart)
-        //     // console.debug('----------')
-
-        //     return ((+ showAirDate) === (+ dayStartTime))            
-        // })
-        
-        // return (todayShows)
 
     }
 
@@ -321,8 +359,6 @@ class ShowsController extends Controller
 
         console.clear()
         selectedShows = selectedShows.sort(ShowsSorter)
-
-        console.debug (selectedShows)
 
         return (selectedShows)
     }

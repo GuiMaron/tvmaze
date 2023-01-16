@@ -9,6 +9,7 @@ services:
     build:
       dockerfile: 'Dockerfile.dev'
       context:    './api'
+    restart:  always
     volumes:
       - './api:/usr/app'
       - '/usr/app/node_modules'

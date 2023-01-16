@@ -44,7 +44,7 @@ export type Show  = {
     // "rating": {...},
     rating:     ShowRatings
     // "image": null,
-    image:      string | null
+    image:      ShowImages | null
     // "summary": "<p>Split happens to country star Trace Adkins and Tennessee Titans coach Mike Vrabel.</p>",
     summary:    string
     // "_links": {...},
@@ -135,6 +135,11 @@ export type ShowImages = {
     medium?:    string | null
 //  "original": "https://static.tvmaze.com/uploads/images/original_untouched/435/1089484.jpg"
     original:   string
+}
+
+export function isShowImages (data : Object) : data is ShowImages
+{
+    return (data.hasOwnProperty('original'))
 }
 
 export type ShowEmbeddedShow = {

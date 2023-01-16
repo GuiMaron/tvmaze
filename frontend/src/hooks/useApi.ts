@@ -68,14 +68,29 @@ const useApi = (config : useApiProps) : [ Array<unknown> | unknown, string, stri
                     setResponse(requestResponse?.data?.data)
                 }
 
+                console.debug('MAYBE HERE')
+                console.debug(requestResponse)
+
+                if (requestResponse?.data?.status === 404) {
+
+                    console.debug('404 esperto')
+                    console.debug(requestResponse?.data)
+
+                    setError(requestResponse?.data?.data)
+                }
+
                 
 
             }
             catch (exception : any) {
 
+                const errorMessage = `${exception?.code || 'ERROR'}: ${exception?.message || 'Unknown Error'}`
+
                 console.error(exception)
                 console.debug(requestResponse)
-                setError(`${exception?.code || 'ERROR'}: ${exception?.message || 'Unknown Error'}`)
+                console.debug(errorMessage)
+
+                setError(errorMessage)
 
             }
             finally {

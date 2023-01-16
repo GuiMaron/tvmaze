@@ -1,0 +1,7 @@
+.ShowView .ShowView-main .ShowView-image {
+    max-height: 300px;
+}
+
+.ShowView .ShowView-main .Show-info ul strong::after {
+    content: ': ';
+}

@@ -27,6 +27,8 @@ app.get('/api', (request, response) =>
 //  Redis and Axios
 const redisClient       = require('./cache/TVMaze')
 const axios             = require('./api/TVMaze')
+const CircularJSON = require('circular-json')
+const { json } = require('body-parser')
 
 const redisPublisher    = redisClient.duplicate()
 let   redisIsConnected  = false
@@ -36,9 +38,7 @@ let   redisIsConnected  = false
 //  TO-DO:  better logging
 //  redisClient.on('error',     ((error) => console.error('Redis Client Error', error)))
 
-
-
-app.get(`/api/${ENV.URLS.FULL_SCHEDULE}`, async (request, response) => 
+app.get(`/${ENV.URLS.FULL_SCHEDULE}`, async (request, response) => 
 {
 
     const fullScheduleUrl = `${ENV.URLS.FULL_SCHEDULE}`
@@ -47,9 +47,16 @@ app.get(`/api/${ENV.URLS.FULL_SCHEDULE}`, async (request, response) =>
 
 })
 
+app.get(`/${ENV.URLS.SHOW_INFO}`, async (request, response) => 
+{
 
+    const showInfoUrl = ENV.URLS.SHOW_INFO.replace(/\:id/, request.params.id)
 
-app.get(`/api/${ENV.URLS.SHOW_INFO}`, async (request, response) => 
+    return (await doRequest(showInfoUrl, request, response))
+
+})
+
+app.get(`/${ENV.URLS.SHOW_SEARCH}`, async (request, response) => 
 {
 
     const showInfoUrl = ENV.URLS.SHOW_INFO.replace(/\:id/, request.params.id)
@@ -68,18 +75,18 @@ async function doRequest (url, request, response)
     const abortController   = new AbortController()
 
     // Trying to get from cache
-    let cachedData = await getFromCache(url, response)
+    let [success, cachedData] = await getFromCache(url, response)
 
-    if (cachedData) {
-        return (response.status(200).send(cachedData))
+    if (success) {
+        return
     }
 
     //  Trying to get from API
-    let fetchedData = await getFromApi(url, response, abortController)
-
-    response.status(200).json(fetchedData)
+    let [sucess, fetchedData] = await getFromApi(url, response, abortController)
 
     await cacheData(url, fetchedData)
+
+    abortController.abort()
 
 }
 
@@ -88,21 +95,13 @@ async function doRequest (url, request, response)
 async function cacheData (url, data)
 {
 
-    //  Caching
-    // console.debug('Caching')
-
+    //  No need to bother the user with cache errors
     try {
-
-        if (! redisIsConnected) {
-            await redisClient.connect()
-            redisIsConnected = true
-        }
-
         await redisClient.set (url, data)
         // redisPublisher.publish('insert', url)
     }
     catch (exception) {
-        // console.error(exception)
+        return (console.error(exception))
     }
 
 }
@@ -113,7 +112,7 @@ async function getFromCache (url, response)
     let cachedData 
 
     //  Trying to get from cache
-    // console.debug('Retrieving from cache')
+    //  console.debug('Retrieving from cache')
 
     try {
 
@@ -126,10 +125,28 @@ async function getFromCache (url, response)
 
     }
     catch (exception) {
-        response.status(500).json({ error: exception })
+
+        const error = { error: exception }
+
+        response.status(500).send(error)
+        return ([ false, error ])
+
     }
 
-    return (cachedData)
+    if (cachedData) {
+
+        const parsedData = CircularJSON.parse(cachedData)
+
+        if ((parsedData?.error) && (parsedData?.error?.status)) {
+            response.status(parsedData?.error?.status).send(cachedData)
+            return ([true, cachedData])
+        }
+
+        response.status(200).send(cachedData)
+        return ([true, cachedData])
+    }
+
+    return ([false, null])
 
 }
 
@@ -152,12 +169,28 @@ async function  getFromApi (url, response, abortController)
 
     }
     catch (exception) {
-        return (response.status(500).json({ error: exception }))
+
+        if (exception?.response?.status == 404) {
+
+            const notFound = circularJSON.stringify({ error: exception?.response?.data })
+
+            response.status(404).send(notFound)
+            return ([true, notFound])
+
+        }
+
+        const error = circularJSON.stringify({ error: exception })
+
+        response.status(500).send(error)
+        return ([false, error])
+
     }
 
     const jsonData = circularJSON.stringify(fetchedData)
 
-    return (jsonData)
+    response.status(400).send(jsonData)
+
+    return ([true, jsonData])
 
 }
 

@@ -1,7 +1,7 @@
 // import ENV from '../ENV'
 
-import React, { Suspense, useMemo, useState } from 'react'
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import React, { Suspense, useMemo, useState }           from 'react'
+import { BrowserRouter, Link, Navigate, Route, Routes } from 'react-router-dom'
 
 import Loading  from './Loading'
 
@@ -87,17 +87,20 @@ function App ()
     <>
       <div className="App w3-theme-light">
 
-        <header className="App-header">
-          <h1 className="w3-theme w3-padding w3-center">
-            <img  alt       = "TVMaze: Search Shows and People"
-                  className = "w3-image"
-                  role      = "logo"
-                  src       = { headerImage } 
-            />
-          </h1>
-        </header>
+      <BrowserRouter>
 
-        <BrowserRouter>
+          <header className="App-header w3-card-2">
+            <h1 className="w3-theme w3-padding w3-center">
+              <Link to="/">
+                <img  alt       = "TVMaze: Search Shows and People"
+                      className = "w3-image"
+                      role      = "logo"
+                      src       = { headerImage } 
+                />
+              </Link>
+            </h1>
+          </header>
+
           <Suspense fallback={<Loading />}>
 
             { (((warning) && (warning?.length)) ? (<WarningMessage  message={ warning } close={ closeWarning } />)  : (<></>)) } 
@@ -132,7 +135,7 @@ function App ()
                
             </Routes> 
           </Suspense>
-        </BrowserRouter>
+      </BrowserRouter>
 
       </div>
     </>

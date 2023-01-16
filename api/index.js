@@ -33,35 +33,55 @@ let   redisIsConnected  = false
 
 
 
-redisClient.on('error',     ((error) => console.error('Redis Client Error', error)))
+//  TO-DO:  better logging
+//  redisClient.on('error',     ((error) => console.error('Redis Client Error', error)))
 
 
 
 app.get(`/api/${ENV.URLS.FULL_SCHEDULE}`, async (request, response) => 
 {
-    
-    response.type('application/json')
 
+    const fullScheduleUrl = `${ENV.URLS.FULL_SCHEDULE}`
+    
+    return (await doRequest(fullScheduleUrl, request, response))
+
+})
+
+
+
+app.get(`/api/${ENV.URLS.SHOW_INFO}`, async (request, response) => 
+{
+
+    const showInfoUrl = ENV.URLS.SHOW_INFO.replace(/\:id/, request.params.id)
+
+    return (await doRequest(showInfoUrl, request, response))
+
+})
+
+
+
+
+async function doRequest (url, request, response)
+{
+
+    response.type('application/json')
     const abortController   = new AbortController()
 
     // Trying to get from cache
-    let cachedData = await getFromCache(ENV.URLS.FULL_SCHEDULE, response)
+    let cachedData = await getFromCache(url, response)
 
     if (cachedData) {
         return (response.status(200).send(cachedData))
     }
 
     //  Trying to get from API
-    let fetchedData = await getFromApi(ENV.URLS.FULL_SCHEDULE, response, abortController)
+    let fetchedData = await getFromApi(url, response, abortController)
 
     response.status(200).json(fetchedData)
 
-    await cacheData(ENV.URLS.FULL_SCHEDULE, fetchedData)
+    await cacheData(url, fetchedData)
 
-     // return (() => (abortController.abort()))
-
-})
-
+}
 
 
 

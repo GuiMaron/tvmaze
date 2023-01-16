@@ -23,7 +23,7 @@ Go into the cloned directory `tvmaze`
 ###  `docker-compose -f docker-compose-dev.yml up`
 
 And access it in the browser
-### [http://localhost:3000](http://localhost:3000)
+### [http://localhost:3000](http://localhost)
 
 To restart it
 
@@ -35,3 +35,8 @@ To restart it
 
 And access it in the browser
 ### [http://localhost](http://localhost)
+
+
+**Architecture**
+
+![Architecture](architecture.jpg "Architecture")

@@ -1,7 +1,7 @@
 // import ENV from '../ENV'
 
 import React, { Suspense, useMemo, useState } from 'react'
-import { BrowserRouter, Route, Routes }       from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 
 import Loading  from './Loading'
 
@@ -18,7 +18,7 @@ function App ()
   const [warning, setWarning] = useState('')
 
   const ShowSearch    = React.lazy(() => import('./ShowSearch'))
-  // // const ShowDetails   = React.lazy(() => import('./ShowDetails'))
+  const ShowDetails   = React.lazy(() => import('./ShowDetails'))
 
   const ErrorMessage    = React.lazy(() => import('./ErrorMessage'))
   const WarningMessage  = React.lazy(() => import('./WarningMessage'))
@@ -60,6 +60,29 @@ function App ()
 
 
 
+  const showDetails = useMemo(() =>
+  {
+
+    const onError = (message : string) =>
+    {
+      if (message !== error) {
+        setError(message)
+      }
+    }
+
+    const onWarning = (message : string) =>
+    {
+      if (message !== warning) {
+        setWarning(message)
+      }
+    }
+
+    return (<ShowDetails onError={ onError } onWarning={ onWarning } />)
+
+  }, [error, warning])
+
+
+
   return (
     <>
       <div className="App w3-theme-light">
@@ -81,25 +104,32 @@ function App ()
             { (((error)   && (error?.length))   ? (<ErrorMessage    message={ error }   close={ closeError } />)    : (<></>)) }
 
             <Routes>
-               
-              <Route  element = { 
+              
+            <Route  element = { 
                       <Suspense fallback={ <Loading /> }>
                         {showSearch}
                       </Suspense>
                      }
                      path    = "/" 
-                />
-                {/* 
-                {
-              //  <Route element = { 
-              //           <Suspense fallback={<Loading />}>
-              //             <ShowDetails onError={onError} onWarning={ onWarning } />
-              //           </Suspense>
-              //         } 
-              //         path    = "/show" 
-              //   />
-                }
-                */}
+              />
+
+              <Route element = { 
+                      <Suspense fallback={ <Loading /> }>
+                        {showDetails}
+                      </Suspense>
+                    } 
+                    path    = "/shows/:id" 
+              />
+
+              { /*  wrong urls default to search  */ }
+              <Route  element={ 
+                        <Suspense fallback={ <Loading /> }>
+                          <Navigate to="/" replace /> 
+                        </Suspense>
+                      } 
+                      path="/*" 
+              />
+               
             </Routes> 
           </Suspense>
         </BrowserRouter>

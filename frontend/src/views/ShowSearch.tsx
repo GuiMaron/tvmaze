@@ -82,7 +82,7 @@ function ShowSearch (props : ShowSearchProps)
         <main className="ShowSearch">
 
             <form   className   = "w3-padding ShowSearch-form"
-                    onSubmit    = { (event : React.FormEvent) => (handleSubmit(event)) }
+                    onSubmit    = { handleSubmit }
                     ref         = { formRef }
             >
 

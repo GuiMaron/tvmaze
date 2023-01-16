@@ -13,7 +13,7 @@ type useApiProps = {
 
 
 
-const useApi = (config : useApiProps) : [ Array<unknown> | unknown, string, string, boolean ] =>
+const useApi = (config : useApiProps) : [ Array<unknown> | unknown, string, string, boolean, Function] =>
 {
 
     const { axiosInstance, url, slowConnectionTimeout, requestConfig = {} } = config
@@ -22,19 +22,22 @@ const useApi = (config : useApiProps) : [ Array<unknown> | unknown, string, stri
     const [loading,     setLoading]     = useState(false)
     const [response,    setResponse]    = useState([] as Array<unknown>)
     const [warning,     setWarning]     = useState('')
+    const [reload,      setReload]      = useState(0)
+
+
+
+    const refresh = (() => (setReload((previous : number) => (previous + 1))))
 
 
 
     useEffect(() => 
     {
 
+        console.debug('using api')
+
         const abortController = new AbortController()
         let   requestResponse       : AxiosResponse
         let   timeoutWarningTimer   : number = 0
-
-        if (loading) {
-            return
-        }
 
         if ((! error) && (! warning)) {
 
@@ -51,6 +54,7 @@ const useApi = (config : useApiProps) : [ Array<unknown> | unknown, string, stri
         const fetchData = async () => 
         {
         
+            console.debug('REFETCHING DATA')
             setLoading(true)
             
             try {
@@ -68,14 +72,8 @@ const useApi = (config : useApiProps) : [ Array<unknown> | unknown, string, stri
                     setResponse(requestResponse?.data?.data)
                 }
 
-                console.debug('MAYBE HERE')
-                console.debug(requestResponse)
 
                 if (requestResponse?.data?.status === 404) {
-
-                    console.debug('404 esperto')
-                    console.debug(requestResponse?.data)
-
                     setError(requestResponse?.data?.data)
                 }
 
@@ -85,11 +83,6 @@ const useApi = (config : useApiProps) : [ Array<unknown> | unknown, string, stri
             catch (exception : any) {
 
                 const errorMessage = `${exception?.code || 'ERROR'}: ${exception?.message || 'Unknown Error'}`
-
-                console.error(exception)
-                console.debug(requestResponse)
-                console.debug(errorMessage)
-
                 setError(errorMessage)
 
             }
@@ -112,11 +105,11 @@ const useApi = (config : useApiProps) : [ Array<unknown> | unknown, string, stri
         })
 
     // eslint-disable-next-line
-    }, [url, slowConnectionTimeout])
+    }, [reload])
 
 
 
-    return ([response, error, warning, loading])
+    return ([response, error, warning, loading, refresh])
 
 }
 

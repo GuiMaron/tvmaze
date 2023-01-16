@@ -2,7 +2,7 @@ import ENV from '../ENV'
 
 import Controller, { ControllerProps } from './Controller'
 
-import { Show, isShowImages } from '../models/Show'
+import { isShowImages, Show, ShowSearchResult } from '../models/Show'
 
 
 
@@ -24,6 +24,23 @@ enum WeekDays {
 }
 
 
+
+export function ShowsSearchSorter (showA : Show, showB : Show) : number
+{
+
+    //  First rule: score (if present)
+    const [scoreA = 0, scoreB = 0] = [showA.score,  showB.score]
+
+    if (scoreA > scoreB) {
+        return (1)
+    } else if (scoreA < scoreB) {
+        return (-1)
+    }
+
+    //  Second rule: name
+    return (showA.name.toLocaleLowerCase().localeCompare(showB.name))
+    
+}
 
 export function ShowsSorter (showA : Show, showB : Show) : number
 {
@@ -49,7 +66,16 @@ export function ShowsSorter (showA : Show, showB : Show) : number
         return (-1)
     }
 
-    //  Fourth rule: name
+    //  Fourth rule: score (if present)
+    const [scoreA = 0, scoreB = 0] = [showA.score,  showB.score]
+
+    if (scoreA > scoreB) {
+        return (1)
+    } else if (scoreA < scoreB) {
+        return (-1)
+    }
+
+    //  Fifth rule: name
     return (showA.name.toLocaleLowerCase().localeCompare(showB.name))
 
 }
@@ -61,10 +87,12 @@ class ShowsController extends Controller
 
     static callbacks = {
         [ENV.URLS.FULL_SCHEDULE]:   function (shows : Array<Show>) : Array<Show> { return (this.selectNowAndUpcomingShows(shows)) }
+    ,   [ENV.URLS.SHOW_SEARCH]:     function (shows : Array<Show>) : Array<Show> { return (this.selectSearchedShows(shows)) }
     }
 
     static SearchTitles = {
         [ENV.URLS.FULL_SCHEDULE]:   'Upcoming shows today'
+    ,   [ENV.URLS.SHOW_SEARCH]:     'Search results for :search'
     ,   default:                    'Upcoming shows today'
     }
 
@@ -163,10 +191,10 @@ class ShowsController extends Controller
                             ||  show?.averageRuntime || show?._embedded?.show?.averageRuntime
                             ||  0
 
-        if (! showRuntime) {
-            console.error(`Show with id = {${show.id}} has no defined runtime`)
-            console.debug(show)
-        }
+        // if (! showRuntime) {
+        //     console.error(`Show with id = {${show.id}} has no defined runtime`)
+        //     console.debug(show)
+        // }
 
         return (showRuntime)
 
@@ -181,8 +209,8 @@ class ShowsController extends Controller
             return (showImage.original || showImage?.medium || '')
         }
 
-        console.error(`Show with id = {${show.id}} has no defined image`)
-        console.debug(show)
+        // console.error(`Show with id = {${show.id}} has no defined image`)
+        // console.debug(show)
 
         return ('')
 
@@ -193,10 +221,10 @@ class ShowsController extends Controller
 
         const showSchwedule = show?.schedule?.days || show?._embedded?.show?.schedule?.days || []
 
-        if (! showSchwedule.length) {
-            console.error(`Show with id = {${show.id}} has no scheduled days`)
-            console.log(show)
-        }
+        // if (! showSchwedule.length) {
+        //     console.error(`Show with id = {${show.id}} has no scheduled days`)
+        //     console.log(show)
+        // }
 
         return (showSchwedule.map((weekDay : string) => (weekDay.toLocaleLowerCase())))
 
@@ -207,10 +235,10 @@ class ShowsController extends Controller
 
         const showSite = show?.officialSite || ''
 
-        if (! showSite) {
-            console.error(`Show with id = {${show.id}} has no official site`)
-            console.log(show)
-        }
+        // if (! showSite) {
+        //     console.error(`Show with id = {${show.id}} has no official site`)
+        //     console.log(show)
+        // }
 
         return (showSite)
 
@@ -221,10 +249,10 @@ class ShowsController extends Controller
 
         const showStart = show?.airtime || show?.schedule?.time || show?._embedded?.show?.schedule?.time
 
-        if (! showStart) {
-            console.error(`Show with id = {${show.id}} has no start time defined`)
-            console.log(show)
-        }
+        // if (! showStart) {
+        //     console.error(`Show with id = {${show.id}} has no start time defined`)
+        //     console.log(show)
+        // }
 
         return (showStart || '')
 
@@ -235,13 +263,13 @@ class ShowsController extends Controller
 
         let showStatus = show?.status || show?._embedded?.show?.status || ''
 
-        if (! showStatus) {
-            console.error(`Show with id = {${show.id}} has no defined status`)
-        }
+        // if (! showStatus) {
+        //     console.error(`Show with id = {${show.id}} has no defined status`)
+        // }
 
         if (! Object.values(ShowStatus).includes(showStatus as ShowStatus)) {
-            console.error(`Show with id = {${show.id}} an unknown status`)
-            console.log(show)
+            // console.error(`Show with id = {${show.id}} an unknown status`)
+            // console.log(show)
             showStatus = ShowStatus.UNKNOWN
         }
 
@@ -254,10 +282,10 @@ class ShowsController extends Controller
 
         const showSummary = show?.summary || show?._embedded?.show?.summary || ''
 
-        if (! showSummary) {
-            console.error(`Show with id = {${show.id}} has no summary`)
-            console.log(show)
-        }
+        // if (! showSummary) {
+        //     console.error(`Show with id = {${show.id}} has no summary`)
+        //     console.log(show)
+        // }
 
         return (showSummary)
 
@@ -268,10 +296,10 @@ class ShowsController extends Controller
 
         const showType = show?.type || show?._embedded?.show?.type || ''
 
-        if (! showType) {
-            console.error(`Show with id = {${show.id}} has no type`)
-            console.log(show)
-        }
+        // if (! showType) {
+        //     console.error(`Show with id = {${show.id}} has no type`)
+        //     console.log(show)
+        // }
 
         return (showType)
 
@@ -347,6 +375,10 @@ class ShowsController extends Controller
 
     }
 
+
+
+
+    
     selectNowAndUpcomingShows (shows : Array<Show>) : Array<Show>
     {
         let selectedShows = ShowsController.filterNowAndUpcomingShows(
@@ -357,10 +389,25 @@ class ShowsController extends Controller
             )
         )
 
-        console.clear()
         selectedShows = selectedShows.sort(ShowsSorter)
 
         return (selectedShows)
+    }
+
+    selectSearchedShows (shows: Array<ShowSearchResult>) : Array<Show> {
+
+        const normalizedShows = shows.map((showResult : ShowSearchResult) => 
+        {
+          const show : Show = showResult.show
+          show.score = showResult.score
+
+          return (show)
+        })
+
+        normalizedShows.sort(ShowsSearchSorter)
+
+        return (normalizedShows)
+
     }
 
     selectTodayShows (shows : Array<Show>) : Array<Show>

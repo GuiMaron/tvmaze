@@ -97,7 +97,7 @@ async function doRequest (url, queryParams, request, response)
     const abortController   = new AbortController()
 
     // Trying to get from cache
-    let [success, cachedData] = await getFromCache(url, response)
+    let [success, cachedData] = await getFromCache(url, queryParams, response)
 
     if (success) {
         return
@@ -106,7 +106,7 @@ async function doRequest (url, queryParams, request, response)
     //  Trying to get from API
     let [sucess, fetchedData] = await getFromApi(url, queryParams, response, abortController)
 
-    await cacheData(url, fetchedData)
+    await cacheData(url, queryParams, fetchedData)
 
     abortController.abort()
 
@@ -114,8 +114,17 @@ async function doRequest (url, queryParams, request, response)
 
 
 
-async function cacheData (url, data)
+async function cacheData (url, queryParams, data)
 {
+
+    if (queryParams) {
+        url = `${url}?${JSON.stringify(queryParams)}`
+    }
+
+    if (! redisIsConnected) {
+        await redisClient.connect()
+        redisIsConnected = true
+    }
 
     //  No need to bother the user with cache errors
     try {
@@ -128,13 +137,17 @@ async function cacheData (url, data)
 
 }
 
-async function getFromCache (url, response)
+async function getFromCache (url, queryParams, response)
 {
 
     let cachedData 
-
+    
     //  Trying to get from cache
     //  console.debug('Retrieving from cache')
+
+    if (queryParams) {
+        url = `${url}?${JSON.stringify(queryParams)}`
+    }
 
     try {
 
@@ -178,7 +191,7 @@ async function  getFromApi (url, queryParams, response, abortController)
     let fetchedData 
 
     //  Geting it from TVMaze
-    // console.debug('Retrieving from API')
+    console.debug('Retrieving from API')
 
     try {
 
@@ -209,9 +222,9 @@ async function  getFromApi (url, queryParams, response, abortController)
 
     }
 
-    const jsonData = circularJSON.stringify(fetchedData)
+    let jsonData = circularJSON.stringify(fetchedData)
 
-    response.status(400).send(jsonData)
+    response.status(200).send(jsonData)
 
     return ([true, jsonData])
 

@@ -1,6 +1,6 @@
 import ENV from '../ENV'
 
-import React, { Suspense, useEffect, useMemo, useRef, useState }  from 'react'
+import React, { Suspense, useCallback, useEffect, useMemo, useRef, useState }  from 'react'
 
 import { Show } from '../models/Show'
 
@@ -25,10 +25,9 @@ type ShowSearchProps = {
 function ShowSearch (props : ShowSearchProps)
 {
     
-    const [url, setUrl] = useState(ENV.URLS.FULL_SCHEDULE);
-
-    const formRef   = useRef(null)
-    const searchRef = useRef(null)
+    const [url, setUrl]                 = useState(ENV.URLS.FULL_SCHEDULE);
+    const [queryParams, setQueryParams] = useState({})
+    const [search, setSearch]           = useState('');
 
     const showsController   = new ShowsController()
 
@@ -36,17 +35,13 @@ function ShowSearch (props : ShowSearchProps)
 
 
 
-    const handleSubmit = (event : React.FormEvent) =>
-    {   
-        event.preventDefault()
-    }
-
-
-
-    const [shows, error, warning, loading] = useApi({
+    const [shows, error, warning, loading, refresh] = useApi({
         axiosInstance:          Axios
-    ,   url:                    ENV.URLS.FULL_SCHEDULE
+    ,   url:                    url
     ,   slowConnectionTimeout:  ENV.AXIOS_CONFIG.WARNING_SLOW_CONNECTION_MS
+    ,   requestConfig:          {
+            params: queryParams
+        }
     })
 
     useEffect(() => 
@@ -61,9 +56,44 @@ function ShowSearch (props : ShowSearchProps)
 
 
 
+    const handleSearchChange = (event : React.ChangeEvent<HTMLInputElement>) =>
+    {
+        setSearch(event.target.value)
+    }
+
+    const handleSubmit = useCallback((event : React.FormEvent<HTMLFormElement>) =>
+    {   
+
+        event.preventDefault()
+        console.debug('SUBMIT')
+
+        if (! search) {
+            console.debug('no search')
+            setQueryParams({})
+            setUrl(ENV.URLS.FULL_SCHEDULE)
+            refresh()
+            return
+        }
+        
+        console.debug('search')
+
+        //  TO-DO:  sanitization
+        setQueryParams({
+            q:  search
+        })
+
+        setUrl(ENV.URLS.SHOW_SEARCH)
+
+        refresh()
+        
+    }, [search, refresh])
+
+
+
     const showsList = useMemo(() =>
     {
 
+        console.debug('NEW SOHW ???')
         const showsCopy         = ((Array.isArray(shows)) ? (shows) : ([ shows ]))
         const showsToDisplay    = showsController.selectShows(url, showsCopy) as Array<Show> 
 
@@ -83,7 +113,6 @@ function ShowSearch (props : ShowSearchProps)
 
             <form   className   = "w3-padding ShowSearch-form"
                     onSubmit    = { handleSubmit }
-                    ref         = { formRef }
             >
 
                 <div className="w3-row w3-row-padding w3-container w3-mobile">
@@ -99,10 +128,11 @@ function ShowSearch (props : ShowSearchProps)
                                 className   = "w3-input w3-round-xxlarge"
                                 disabled    = { !! loading }
                                 id          = "show-search"
-                                ref         = { searchRef } 
+                                onChange    = { handleSearchChange }
                                 placeholder = "Search Shows and People"
                                 tabIndex    = { 0 }
                                 type        = "text" 
+                                value       = { search }
                         />
                     </div>
 

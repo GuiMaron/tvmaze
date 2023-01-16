@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom'
 import { FontAwesomeIcon }  from '@fortawesome/react-fontawesome'
 import { solid }            from '@fortawesome/fontawesome-svg-core/import.macro'
 
+import '../static/css/NoShowsFound.css'
+
 
 
 
@@ -15,7 +17,7 @@ function ShowNotFound ()
 
             <span className="w3-xlarge">Show Not Found!</span>
 
-            <FontAwesomeIcon    className   = "w3-icon w3-xlarge w3-center w3-margin-left"  
+            <FontAwesomeIcon    className   = "w3-icon w3-xlarge l2 w3-center"  
                                 icon        = { solid('face-frown') } 
             />
 
@@ -26,9 +28,9 @@ function ShowNotFound ()
                 <Link to="/" className="w3-show w3-theme-light w3-margin">
                     <button className="w3-button clickable w3-show-inline-block w3-xlarge">
                         
-                        <span>Go to Search</span>
+                        <span>Go to Seatch</span>
 
-                        <FontAwesomeIcon    className   = "w3-icon w3-xlarge w3-margin-left"  
+                        <FontAwesomeIcon    className   = "w3-icon w3-xlarge l2 w3-center"  
                                             icon        = { solid('magnifying-glass-arrow-right') } 
                         />
 

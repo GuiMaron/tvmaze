@@ -4,12 +4,12 @@ export function isShow (data : Object) : data is Show
         (data.hasOwnProperty('id'))
     &&  (data.hasOwnProperty('url'))
     &&  (data.hasOwnProperty('name'))
-    &&  (data.hasOwnProperty('season'))
-    &&  (data.hasOwnProperty('number'))
+    // &&  (data.hasOwnProperty('season'))
+    // &&  (data.hasOwnProperty('number'))
     &&  (data.hasOwnProperty('type'))
-    &&  (data.hasOwnProperty('airdate'))
-    &&  (data.hasOwnProperty('airtime'))
-    &&  (data.hasOwnProperty('airstamp'))
+    // &&  (data.hasOwnProperty('airdate'))
+    // &&  (data.hasOwnProperty('airtime'))
+    // &&  (data.hasOwnProperty('airstamp'))
     &&  (data.hasOwnProperty('runtime'))
     &&  (data.hasOwnProperty('rating'))
     &&  (data.hasOwnProperty('image'))
@@ -28,17 +28,17 @@ export type Show  = {
     // "name": "Trace Adkins vs. Mike Vrabel",
     name:       string
     // "season": 1,
-    season:     number
+    season?:    number
     // "number": 6,
-    number:     number
+    number?:    number
     // "type": "regular",
     type:       string
     // "airdate": "2023-01-09",
-    airdate:    string
+    airdate?:    string
     // "airtime": "23:00",
-    airtime:    string
+    airtime?:    string
     // "airstamp": "2023-01-10T04:00:00+00:00",
-    airstamp:   Date
+    airstamp?:   Date
     // "runtime": 60,
     runtime:    number
     // "rating": {...},
@@ -67,10 +67,22 @@ export type Show  = {
     dvdCountry      ?: ShowCountry
     externals       ?: ShowExternals
     updated         ?: number
+    score           ?: number
 }
 
 export default Show
 
+
+
+export type ShowSearchResult = {
+    show:   Show
+,   score:  number
+}
+
+export function isShowSearchResult (data : Object) : data is ShowSearchResult
+{
+    return ((data.hasOwnProperty('show')) && (data.hasOwnProperty('score')))
+}
 
 
 

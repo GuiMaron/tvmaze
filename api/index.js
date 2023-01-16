@@ -29,6 +29,7 @@ const redisClient       = require('./cache/TVMaze')
 const axios             = require('./api/TVMaze')
 const CircularJSON = require('circular-json')
 const { json } = require('body-parser')
+const { request } = require('express')
 
 const redisPublisher    = redisClient.duplicate()
 let   redisIsConnected  = false
@@ -40,35 +41,56 @@ let   redisIsConnected  = false
 
 app.get(`/${ENV.URLS.FULL_SCHEDULE}`, async (request, response) => 
 {
-
-    const fullScheduleUrl = `${ENV.URLS.FULL_SCHEDULE}`
-    
-    return (await doRequest(fullScheduleUrl, request, response))
-
+    return (getFullShchedule(request, response))
 })
 
 app.get(`/${ENV.URLS.SHOW_INFO}`, async (request, response) => 
 {
-
-    const showInfoUrl = ENV.URLS.SHOW_INFO.replace(/\:id/, request.params.id)
-
-    return (await doRequest(showInfoUrl, request, response))
-
+    return (getShowInfo(request, response))
 })
 
 app.get(`/${ENV.URLS.SHOW_SEARCH}`, async (request, response) => 
 {
-
-    const showInfoUrl = ENV.URLS.SHOW_INFO.replace(/\:id/, request.params.id)
-
-    return (await doRequest(showInfoUrl, request, response))
-
+    return (getShowSearch(request, response))
 })
 
 
 
+async function getFullShchedule (request, response)
+{
+    const fullScheduleUrl = `${ENV.URLS.FULL_SCHEDULE}`
+    
+    return (await doRequest(fullScheduleUrl, {}, request, response))
+}
 
-async function doRequest (url, request, response)
+async function getShowInfo (request, response)
+{
+    const showInfoUrl = ENV.URLS.SHOW_INFO.replace(/\:id/, request.params.id)
+
+    return (await doRequest(showInfoUrl, {}, request, response))
+}
+
+async function getShowSearch (request, response)
+{
+
+    const query = request.query.q || request.query.query || request.query.search
+
+    if (! query) {
+        return (getFullShchedule(request, response))
+    }
+
+    const queryParams = {
+        q:  query
+    }
+
+    return (await doRequest(ENV.URLS.SHOW_SEARCH, queryParams, request, response))
+
+}
+
+
+
+
+async function doRequest (url, queryParams, request, response)
 {
 
     response.type('application/json')
@@ -82,7 +104,7 @@ async function doRequest (url, request, response)
     }
 
     //  Trying to get from API
-    let [sucess, fetchedData] = await getFromApi(url, response, abortController)
+    let [sucess, fetchedData] = await getFromApi(url, queryParams, response, abortController)
 
     await cacheData(url, fetchedData)
 
@@ -150,7 +172,7 @@ async function getFromCache (url, response)
 
 }
 
-async function  getFromApi (url, response, abortController)
+async function  getFromApi (url, queryParams, response, abortController)
 {
 
     let fetchedData 
@@ -164,6 +186,7 @@ async function  getFromApi (url, response, abortController)
             url
         ,   {
                 signal: abortController.signal
+            ,   params: queryParams || {}
             }
         )
 

@@ -16,6 +16,8 @@ RUN npm run build
 #   PRODUCTION
 FROM nginx:stable-alpine
 
+RUN pwd
+
 COPY --from=frontend-builder /usr/app/build/ /usr/share/nginx/html
 COPY ./nginx/default.conf   /etc/nginx/conf.d/default.conf
 

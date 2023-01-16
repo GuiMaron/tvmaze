@@ -3,9 +3,11 @@ version:  '3'
 services:
  
   redis:
-    image:  'redis:latest'
+    hostname: redis
+    image:    'redis:latest'
 
   api:
+    hostname:     api
     build:
       dockerfile: 'Dockerfile.dev'
       context:    './api'
@@ -19,6 +21,7 @@ services:
       - redis
 
   frontend:
+    hostname:     frontend
     build:
       dockerfile: 'Dockerfile.dev'
       context:    './frontend'
@@ -32,7 +35,20 @@ services:
     depends_on:
       - api
 
+  tests:
+    hostname:     tests
+    build:
+      dockerfile: 'Dockerfile.dev'
+      context:    './frontend' 
+    volumes:
+      - './frontend:/usr/app'
+      - '/usr/app/node_modules'
+    command:  ["npm", "run", "test"]
+    depends_on:
+      - api
+
   nginx:
+    hostname:     nginx
     build:
       dockerfile: 'Dockerfile.dev'
       context:    './nginx'

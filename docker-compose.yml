@@ -2,10 +2,16 @@ version:  '3'
 
 services:
  
+  redis:
+    hostname:   redis
+    image:    'redis:latest'
+
   api:
+    hostname:     api
     build:
       dockerfile: 'Dockerfile'
       context:    './api'
+    restart:  always
     volumes:
       - './api:/usr/app'
       - '/usr/app/node_modules'
@@ -13,11 +19,10 @@ services:
       - redis
 
   frontend:
+    hostname:     frontend
     build:
       dockerfile: 'Dockerfile'
       context:    './frontend'
-    environment:
-      - WDS_SOCKET_PORT=0    
     volumes:
       - './frontend:/usr/app'
       - '/usr/app/node_modules'
@@ -25,6 +30,7 @@ services:
       - api
 
   nginx:
+    hostname:     nginx
     build:
       dockerfile: 'Dockerfile'
       context:    './nginx'
@@ -34,6 +40,3 @@ services:
     depends_on:
       - api
       - frontend
-
-  redis:
-    image:  'redis:latest'

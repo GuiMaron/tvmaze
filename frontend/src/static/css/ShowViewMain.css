@@ -5,3 +5,7 @@
 .ShowView .ShowView-main .Show-info ul strong::after {
     content: ': ';
 }
+
+.ShowView .ShowView-main .Show-info a {
+    overflow-wrap: anywhere;
+}

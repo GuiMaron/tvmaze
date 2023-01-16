@@ -64,7 +64,7 @@ function ShowSearch (props : ShowSearchProps)
     const showsList = useMemo(() =>
     {
 
-        const showsCopy         = ((Array.isArray(shows)) ? (shows) : ([ shows ])).slice(0, 500) as Array<Show>
+        const showsCopy         = ((Array.isArray(shows)) ? (shows) : ([ shows ]))
         const showsToDisplay    = showsController.selectShows(url, showsCopy) as Array<Show> 
 
         return (

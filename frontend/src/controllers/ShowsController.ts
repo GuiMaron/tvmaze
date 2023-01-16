@@ -28,17 +28,19 @@ enum WeekDays {
 export function ShowsSorter (showA : Show, showB : Show) : number
 {
 
-    //  Firts rule: earliest timestamp
-    const [airstampA, airstampB] = [+ new Date(ShowsController.getShowAirStamp(showA)),  + new Date(ShowsController.getShowAirStamp(showB))]
+    //  Firts rule: earliest airtime
+    const [airtimeA, airtimeB] = [(+ ShowsController.getShowAirTime(showA)),  (+ ShowsController.getShowAirTime(showB))]
 
-    if (airstampA > airstampB) {
+    if (airtimeA > airtimeB) {
         return (1)
     }
-    else if (airstampA < airstampB) {
+    else if (airtimeA < airtimeB) {
         return (-1)
     }
 
-    //  Second rule: less runtime
+    //  TO-DO:  Second rule (SHOULD BE IN YOUR FAVORITES)
+
+    //  Third rule: less runtime
     const [runtimeA, runtimeB] = [ShowsController.getShowRuntime(showA),  + ShowsController.getShowRuntime(showB)]
 
     if (runtimeA > runtimeB) {
@@ -46,8 +48,6 @@ export function ShowsSorter (showA : Show, showB : Show) : number
     } else if (runtimeA < runtimeB) {
         return (-1)
     }
-
-    //  TO-DO:  Third rule (SHOULD BE IN YOUR FAVORITES)
 
     //  Fourth rule: name
     return (showA.name.toLocaleLowerCase().localeCompare(showB.name))
@@ -103,6 +103,23 @@ class ShowsController extends Controller
         }
 
         return (show?.airstamp || new Date(0))
+
+    }
+
+    static getShowAirTime(show : Show) : Date
+    {   
+
+        const airTime = show?.airtime || show?.schedule?.time || show?._embedded?.show?.schedule?.time || ''
+
+        if (! airTime) {
+            console.error(`Show with id = {${show.id}} has no defined airtime`)
+            console.debug(show)
+        }
+
+        const { nowYear, nowMonth, nowDay } = Controller.getDateInfo()
+        const [ airHour, airMinute ] = airTime.split(':').map((value : string) => (parseInt(value)))
+
+        return (new Date(nowYear, nowMonth, nowDay, airHour, airMinute))
 
     }
 
@@ -207,41 +224,41 @@ class ShowsController extends Controller
     static filterTodayShows (shows : Array<Show>) : Array<Show>
     {
 
-        // const dayOfTheWeek = WeekDays[new Date().getUTCDay()]
+        const dayOfTheWeek = WeekDays[new Date().getUTCDay()]
         
-        // const todayShows = shows.filter((show : Show) =>
-        // {
-        //     const showShedule = ShowsController.getShowSchedule(show)
-
-        //     if (! showShedule.length) {
-        //         return (false)
-        //     }
-
-        //     return (showShedule.includes(dayOfTheWeek))
-
-        // })
-
-        // return (todayShows)
-
-        const { dayStartTime, dayStart } = Controller.getDateInfo()
-
         const todayShows = shows.filter((show : Show) =>
         {
-            const showAirDate = ShowsController.getShowAirDate(show)
+            const showShedule = ShowsController.getShowSchedule(show)
 
-            // console.debug('----------')
-            // console.debug(show)
-            // console.debug(showAirDate)
-            // console.debug(+ showAirDate)
-            // console.debug('TODAY')
-            // console.debug(dayStartTime)
-            // console.debug(dayStart)
-            // console.debug('----------')
+            if (! showShedule.length) {
+                return (false)
+            }
 
-            return ((+ showAirDate) === (+ dayStartTime))            
+            return (showShedule.includes(dayOfTheWeek))
+
         })
-        
+
         return (todayShows)
+
+        // const { dayStartTime, dayStart } = Controller.getDateInfo()
+
+        // const todayShows = shows.filter((show : Show) =>
+        // {
+        //     const showAirDate = ShowsController.getShowAirDate(show)
+
+        //     // console.debug('----------')
+        //     // console.debug(show)
+        //     // console.debug(showAirDate)
+        //     // console.debug(+ showAirDate)
+        //     // console.debug('TODAY')
+        //     // console.debug(dayStartTime)
+        //     // console.debug(dayStart)
+        //     // console.debug('----------')
+
+        //     return ((+ showAirDate) === (+ dayStartTime))            
+        // })
+        
+        // return (todayShows)
 
     }
 
@@ -294,7 +311,7 @@ class ShowsController extends Controller
 
     selectNowAndUpcomingShows (shows : Array<Show>) : Array<Show>
     {
-        const selectedShows = ShowsController.filterNowAndUpcomingShows(
+        let selectedShows = ShowsController.filterNowAndUpcomingShows(
             ShowsController.filterTodayShows(
                  ShowsController.filterShowsWithStartTime(
                     ShowsController.filterActiveShows(shows)
@@ -303,7 +320,9 @@ class ShowsController extends Controller
         )
 
         console.clear()
-        selectedShows.sort(ShowsSorter)
+        selectedShows = selectedShows.sort(ShowsSorter)
+
+        console.debug (selectedShows)
 
         return (selectedShows)
     }

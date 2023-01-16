@@ -27,8 +27,14 @@ function ShowListTable (props : ShowListTableProps)
         <tr className="w3-theme-d3">
             { ((process.env.NODE_ENV === 'development') ? (<th data-field="id" className="w3-hide-small">ID</th>) : (<></>)) }
             <th data-field="name">Name</th>
-            <th data-field="season">Season</th>
-            <th data-field="number">Number</th>
+            <th data-field="season">
+                <span className="w3-hide-medium w3-hide-large">S.</span>
+                <span className="w3-hide-small">Season</span>
+            </th>
+            <th data-field="number">
+                <span className="w3-hide-medium w3-hide-large">E.</span>
+                <span className="w3-hide-small">Episode</span>
+            </th>
             <th data-field="starts">Starts</th>
             <th data-field="ends">Ends</th>
         </tr>

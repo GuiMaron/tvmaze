@@ -2,16 +2,30 @@
     height: 60px;
 }
 
+
+
 .App .ShowsList .ShowsList-PaginationBar .ShowsList-FastNavigationButtonWrapper {
-    width:  75px;
+    width:  40px;
 }
 
 @media (min-width: 601px)
 {
     .App .ShowsList .ShowsList-PaginationBar .ShowsList-FastNavigationButtonWrapper {
-        width:  150px;
+        width:  100px;
     }
 }
+
+
+.ShowsList-FastNavigationButton {
+    min-width: 100%;
+}
+
+.ShowsList-FastNavigationButton span {
+    display:    block;
+    clear:      both;
+}
+
+
 
 .App .ShowsList .ShowsList-PaginationBar > div {
     min-height: 60px;
@@ -19,7 +33,7 @@
 
 .App .ShowsList .ShowsList-PaginationBar .ShowsList-PageButtonWrapper, 
 .App .ShowsList .ShowsList-PaginationBar .ShowsList-PageButtonWrapper .ShowsList-list {
-    width:  calc(100% - 150px);
+    width:  calc(100% - 160px);
 }
 
 .App .ShowsList .ShowsList-PaginationBar .ShowsList-PageButtonWrapper { 
@@ -31,7 +45,7 @@
 {
     .App .ShowsList .ShowsList-PaginationBar .ShowsList-PageButtonWrapper {
         padding:    0px;
-        width:      calc(100% - 300px);
+        width:      calc(100% - 400px);
     }
 }
 

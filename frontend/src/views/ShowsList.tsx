@@ -42,6 +42,13 @@ function ShowsList (props : ShowsListProps)
             return (<></>)
         }
 
+
+
+        const firstPage     = () => (setPage(1))
+        const previousPage  = () => (setPage((current : number) => ((current > 1)       ? (current - 1) : (1))))
+        const nextPage      = () => (setPage((current : number) => ((current < pages)   ? (current + 1) : (pages))))
+        const lastPage      = () => (setPage(pages))
+
         
 
         const pageLinks = range(1, (pages + 1)).map((pageIndex : number) => 
@@ -50,6 +57,7 @@ function ShowsList (props : ShowsListProps)
                 <button  className   = { `clickable w3-button w3-bar-item ${((pageIndex === page) ? ('w3-theme-dark') : (''))} ShowsList-PageButton` }
                     data-page   = { pageIndex }
                     key         = { pageIndex }
+                    onClick     = { () => (setPage(pageIndex)) }
                 >
                     <span>{ pageIndex }</span>
                 </button>
@@ -59,12 +67,19 @@ function ShowsList (props : ShowsListProps)
 
 
         return (
-            <div className="w3-bar ShowsList-PaginationBar">
+            <div className="w3-bar ShowsList-PaginationBar w3-border-bottom">
+
                 <div className="w3-bar-item ShowsList-FastNavigationButtonWrapper w3-border w3-center">
-                    <a href="#" className="w3-button" data-page="0">
-                        <FontAwesomeIcon icon={ solid('chevron-left') } />
-                        <span className="w3-hide-small w3-margin-left">Previous</span>
-                    </a>
+                    <button className="ShowsList-FastNavigationButton clickable w3-button w3-bar-item no-padding w3-center" data-page={ 1 } onClick={ firstPage }>
+                        <FontAwesomeIcon icon={ solid('backward-fast') } />
+                        <span className="w3-hide-small">First</span>
+                    </button>
+                </div>
+                <div className="w3-bar-item ShowsList-FastNavigationButtonWrapper w3-border w3-center">
+                    <button className="ShowsList-FastNavigationButton clickable w3-button w3-bar-item no-padding w3-center" data-page={ (page - 1) } onClick={ previousPage }>
+                        <FontAwesomeIcon icon={ solid('backward-step') } />
+                        <span className="w3-hide-small">Previous</span>
+                    </button>
                 </div>
                 
                 <div className="w3-bar-item ShowsList-PageButtonWrapper w3-border">
@@ -74,21 +89,32 @@ function ShowsList (props : ShowsListProps)
                 </div>
 
                 <div className="w3-bar-item ShowsList-FastNavigationButtonWrapper w3-border w3-center">
-                    <a href="#" className="w3-button" data-page={ pages - 1 }>
-                        <span className="w3-hide-small w3-margin-right">Next</span>
-                        <FontAwesomeIcon icon={ solid('chevron-right') } />
-                    </a>
+                    <button className="ShowsList-FastNavigationButton clickable w3-button w3-bar-item no-padding w3-center" data-page={ (page + 1) } onClick={ nextPage }>
+                        <span className="w3-hide-small">Next</span>
+                        <FontAwesomeIcon icon={ solid('forward-step') } />
+                    </button>
                 </div>
+                <div className="w3-bar-item ShowsList-FastNavigationButtonWrapper w3-border w3-center">
+                    <button className="ShowsList-FastNavigationButton clickable w3-button w3-bar-item no-padding w3-center" data-page={ 1 } onClick={ lastPage }>
+                        <span className="w3-hide-small">Last</span>
+                        <FontAwesomeIcon icon={ solid('forward-fast') } />
+                    </button>
+                </div>
+
             </div>
         )
 
-    }, [shows, pageSize, pages])
+    }, [shows, page, pageSize, pages])
 
 
 
     const showsPage = useMemo(() =>
     {
-        return (<ShowsPage page={ page } pages={ pages } pageSize={ pageSize } shows={ shows.slice(((page - 1) * pageSize), pageSize) } />)
+
+        const slicedShows = shows.slice(((page - 1) * pageSize))
+
+        return (<ShowsPage page={ page } pages={ pages } pageSize={ pageSize } shows={ slicedShows } />)
+
     },  [shows, page, pages, pageSize])
 
     useEffect(() => 

@@ -1,6 +1,6 @@
 .App .ShowsList .ShowsList-list .ShowsList-table-wrapper {
-    min-height: calc(100vh - 160px - 205px);
-    max-height: calc(100vh - 160px - 205px);
+    min-height: calc(100vh - 160px - 150px);
+    max-height: calc(100vh - 160px - 150px);
     max-width:  calc(100vw - 32px);
     min-width:  calc(100vw - 32px);
 }
@@ -36,9 +36,11 @@ td[data-field] span {
     text-overflow:  ellipsis;
 }
 
-th[data-field="name"], 
-td[data-field="name"] {
-    max-width: 10%;
+@media (max-width: 600px)
+{
+    th[data-field="name"], 
+    td[data-field="name"] {
+        max-width: 25vw;
+    }
 }
-
 

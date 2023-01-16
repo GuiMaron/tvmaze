@@ -71,6 +71,7 @@ Some re-learnig was needed (`redis` and `react-router-dom` specially).
 #   If I had more time?
 Well, if I had even more time I would improve this points first
 
+-   writing tests, I already set up the tests container, but wrote none
 -   rewriting the `api` in typescript
 -   changing the approach to manage the shows, moving from the `ShowsController` to a `Show` based class
 -   improve loggin

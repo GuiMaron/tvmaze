@@ -28,7 +28,7 @@ function ShowNotFound ()
                 <Link to="/" className="w3-show w3-theme-light w3-margin">
                     <button className="w3-button clickable w3-show-inline-block w3-xlarge">
                         
-                        <span>Go to Seatch</span>
+                        <span>Go to Search</span>
 
                         <FontAwesomeIcon    className   = "w3-icon w3-xlarge l2 w3-center"  
                                             icon        = { solid('magnifying-glass-arrow-right') } 

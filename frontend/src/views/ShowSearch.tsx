@@ -97,7 +97,7 @@ function ShowSearch (props : ShowSearchProps)
                     <div className="w3-col w3-rest w3-padding l10 m8 s9">
                         <input  autoFocus   = { true }
                                 className   = "w3-input w3-round-xxlarge"
-                                // disabled    = { !! loading }
+                                disabled    = { !! loading }
                                 id          = "show-search"
                                 ref         = { searchRef } 
                                 placeholder = "Search Shows and People"
@@ -108,7 +108,7 @@ function ShowSearch (props : ShowSearchProps)
 
                     <div className="w3-col l1 m2 s3 w3-center ShowSearch-form-search-button-wrapper">
                         <button className   = "w3-button w3-border w3-round-xxlarge w3-theme-dark ShowSearch-form-search-button"
-                                // disabled    = { !! loading }
+                                disabled    = { !! loading }
                                 type        = "submit"
                         >
                             <span className="w3-large">

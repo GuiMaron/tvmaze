@@ -28,29 +28,29 @@ enum WeekDays {
 export function ShowsSorter (showA : Show, showB : Show) : number
 {
 
-    console.debug('-----------')
-    console.debug(showA)
-    console.debug('x')
-    console.debug(showB)
-    console.debug('-----------')
-
+    //  Firts rule: earliest timestamp
     const [airstampA, airstampB] = [+ new Date(ShowsController.getShowAirStamp(showA)),  + new Date(ShowsController.getShowAirStamp(showB))]
 
-    console.debug(new Date(airstampA), ' X ', new Date(airstampB))
-
     if (airstampA > airstampB) {
-        console.debug('B first')
         return (1)
     }
-
-    if (airstampA < airstampB) {
-        console.debug('A first')
+    else if (airstampA < airstampB) {
         return (-1)
     }
 
-    console.debug('AIRSTAMPS ARE THE SAME')
+    //  Second rule: less runtime
+    const [runtimeA, runtimeB] = [ShowsController.getShowRuntime(showA),  + ShowsController.getShowRuntime(showB)]
 
-    return (0)
+    if (runtimeA > runtimeB) {
+        return (1)
+    } else if (runtimeA < runtimeB) {
+        return (-1)
+    }
+
+    //  TO-DO:  Third rule (SHOULD BE IN YOUR FAVORITES)
+
+    //  Fourth rule: name
+    return (showA.name.toLocaleLowerCase().localeCompare(showB.name))
 
 }
 

@@ -1,17 +1,22 @@
 import React, { useEffect, useMemo, useState } from 'react'
 
-// import ShowsPage    from './ShowsPage'
-// import NoShowsFound from './NoShowsFound'
 
 import { FontAwesomeIcon }  from '@fortawesome/react-fontawesome'
 import { solid }            from '@fortawesome/fontawesome-svg-core/import.macro'
+
+import Show from '../models/Show'
+
+import ShowsPage    from './ShowsPage'
+import NoShowsFound from './NoShowsFound'
+
+import range from '../utils/range'
 
 import '../static/css/ShowsList.css'
 
 
 
 type ShowsListProps = {
-    shows:      Array<Object>
+    shows:      Array<Show>
 ,   pageSize:   number
 ,   title:      string
 }
@@ -23,7 +28,7 @@ function ShowsList (props : ShowsListProps)
 
     const { shows = [], pageSize, title }  = props
 
-    const [page,    setPage]        = useState(0)
+    const [page,    setPage]        = useState(1)
     const [pages,   setPages]       = useState(0)
 
     const pageButtonWidth = 50
@@ -37,17 +42,21 @@ function ShowsList (props : ShowsListProps)
             return (<></>)
         }
 
-        const pageLinks = []
+        
 
-        for (let pageIndex = 0; pageIndex < pages; pageIndex ++) {
-            pageLinks.push( 
-                <button  className   = { `clickable w3-button w3-bar-item ${((pageIndex == page) ? ('w3-theme-dark') : (''))} ShowsList-PageButton` }
+        const pageLinks = range(1, (pages + 1)).map((pageIndex : number) => 
+        {
+            return(
+                <button  className   = { `clickable w3-button w3-bar-item ${((pageIndex === page) ? ('w3-theme-dark') : (''))} ShowsList-PageButton` }
                     data-page   = { pageIndex }
                     key         = { pageIndex }
                 >
-                    <span>{ (pageIndex + 1) }</span>
-                </button>)             
-        }
+                    <span>{ pageIndex }</span>
+                </button>
+            )
+        })
+
+
 
         return (
             <div className="w3-bar ShowsList-PaginationBar">
@@ -59,7 +68,7 @@ function ShowsList (props : ShowsListProps)
                 </div>
                 
                 <div className="w3-bar-item ShowsList-PageButtonWrapper w3-border">
-                    <div className="w3-bar ShowsList-PageButtonWrapper-content" style={ { width: `${(pages* pageButtonWidth)}px` } }>
+                    <div className="w3-bar ShowsList-PageButtonWrapper-content" style={ { width: `${(pages * pageButtonWidth)}px` } }>
                         { pageLinks }
                     </div>
                 </div>
@@ -77,16 +86,16 @@ function ShowsList (props : ShowsListProps)
 
 
 
-    // const showsPage = useMemo(() =>
-    // {
-    //     return (<ShowsPage page={ page } pages={ pages } shows={ shows.slice((page * pageSize), pageSize) } />)
-    // },  [shows, page, pages])
+    const showsPage = useMemo(() =>
+    {
+        return (<ShowsPage page={ page } pages={ pages } pageSize={ pageSize } shows={ shows.slice(((page - 1) * pageSize), pageSize) } />)
+    },  [shows, page, pages, pageSize])
 
     useEffect(() => 
     {
         setPages(Math.ceil(shows.length / pageSize))
-        setPage(0)
-    }, [shows, shows.length])
+        setPage(1)
+    }, [pageSize, shows, shows.length])
 
 
 
@@ -104,7 +113,7 @@ function ShowsList (props : ShowsListProps)
 
             <div className="w3-border-bottom ShowsList-list" data-pages={ pages }>
                 
-                {/* { ((shows.length === 0) ? (<NoShowsFound />) : (showsPage)) } */}
+                { ((shows.length === 0) ? (<NoShowsFound />) : (showsPage)) }
 
             </div>
 

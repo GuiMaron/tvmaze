@@ -1,0 +1,44 @@
+.App .ShowsList .ShowsList-list .ShowsList-table-wrapper {
+    min-height: calc(100vh - 160px - 205px);
+    max-height: calc(100vh - 160px - 205px);
+    max-width:  calc(100vw - 32px);
+    min-width:  calc(100vw - 32px);
+}
+
+.App .ShowsList .ShowsList-list[data-pages="1"] .ShowsList-table-wrapper {
+    min-height: calc(100vh - 160px - 100px);
+    max-height: calc(100vh - 160px - 100px);
+}
+
+
+
+
+.App .ShowsList .ShowsList-list .ShowsList-table thead, 
+.App .ShowsList .ShowsList-list .ShowsList-table thead tr {
+    min-width: 100%;
+}
+
+
+
+.App .ShowsList .ShowsList-list .ShowsList-table-wrapper table tbody {
+    min-height:    100%;
+}
+
+
+
+th[data-field] span, 
+td[data-field] span {    
+    display:        block;
+    line-height:    1em;
+    max-height:     2em;
+    max-width:      100%;
+    overflow:       hidden;
+    text-overflow:  ellipsis;
+}
+
+th[data-field="name"], 
+td[data-field="name"] {
+    max-width: 10%;
+}
+
+

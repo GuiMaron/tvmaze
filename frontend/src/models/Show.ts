@@ -69,6 +69,8 @@ export type Show  = {
     updated         ?: number
 }
 
+export default Show
+
 
 
 

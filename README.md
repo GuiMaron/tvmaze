@@ -31,12 +31,25 @@ To restart it
 
 ###  `docker-compose -f docker-compose-dev.yml down && docker-compose -f docker-compose-dev.yml up --build`
 
-**Production environment**
+**Production environment (not really setup, only built)**
 
 ###  `docker-compose up`
 
 And access it in the browser
 ### [http://localhost](http://localhost)
+
+
+
+#   How to find a show that is not an 404?
+
+Search for `Dome`, 
+
+![Search for "Dome"](DomeSearch.png "Search for \"Dome\"")
+
+the show with `id = 1`, named `Under the Dome`, for example, will lend in a Show Details page.
+
+![Details for Under the Dome](ShowPage.png "Details for Under the Dome")
+
 
 
 #   Architecture

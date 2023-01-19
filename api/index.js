@@ -39,17 +39,17 @@ let   redisIsConnected  = false
 //  TO-DO:  better logging
 //  redisClient.on('error',     ((error) => console.error('Redis Client Error', error)))
 
-app.get(`/${ENV.URLS.FULL_SCHEDULE}`, async (request, response) => 
+app.get(`/api/${ENV.URLS.FULL_SCHEDULE}`, async (request, response) => 
 {
     return (getFullShchedule(request, response))
 })
 
-app.get(`/${ENV.URLS.SHOW_INFO}`, async (request, response) => 
+app.get(`/api/${ENV.URLS.SHOW_INFO}`, async (request, response) => 
 {
     return (getShowInfo(request, response))
 })
 
-app.get(`/${ENV.URLS.SHOW_SEARCH}`, async (request, response) => 
+app.get(`/api/${ENV.URLS.SHOW_SEARCH}`, async (request, response) => 
 {
     return (getShowSearch(request, response))
 })
@@ -99,7 +99,7 @@ async function doRequest (url, queryParams, request, response)
     // Trying to get from cache
     let [success, cachedData] = await getFromCache(url, queryParams, response)
 
-    if (success) {
+    if ((success) && (! cacheData.error)) {
         return
     }
 
@@ -132,7 +132,7 @@ async function cacheData (url, queryParams, data)
         // redisPublisher.publish('insert', url)
     }
     catch (exception) {
-        return (console.error(exception))
+        // return (console.error(exception))
     }
 
 }
@@ -164,7 +164,7 @@ async function getFromCache (url, queryParams, response)
         const error = { error: exception }
 
         response.status(500).send(error)
-        return ([ false, error ])
+        return ([ true, error ])
 
     }
 
@@ -191,7 +191,7 @@ async function  getFromApi (url, queryParams, response, abortController)
     let fetchedData 
 
     //  Geting it from TVMaze
-    console.debug('Retrieving from API')
+    // console.debug('Retrieving from API')
 
     try {
 

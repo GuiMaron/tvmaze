@@ -1,6 +1,6 @@
 import ENV      from '../ENV'
 
-import Axios    from 'axios'
+import Axios from 'axios'
 
 
 

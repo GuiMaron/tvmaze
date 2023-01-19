@@ -5,8 +5,8 @@ import { useParams }    from 'react-router-dom'
 
 import Show     from '../models/Show'
 
-import Axios            from '../apis/TVMaze'
-import useApi           from '../hooks/useApi'
+import Axios                from '../apis/TVMaze'
+import useApi               from '../hooks/useApi'
 
 import { isError404 }   from '../utils/errorParser'
 

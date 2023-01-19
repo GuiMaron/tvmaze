@@ -40,7 +40,7 @@ function ShowSearch (props : ShowSearchProps)
     ,   url:                    url
     ,   slowConnectionTimeout:  ENV.AXIOS_CONFIG.WARNING_SLOW_CONNECTION_MS
     ,   requestConfig:          {
-            params: queryParams
+            params: queryParams as Object
         }
     })
 

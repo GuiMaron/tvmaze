@@ -2,10 +2,21 @@ version:  '3'
 
 services:
 
+  redis:
+    image:      'redis:latest'
+    restart:    always
+    mem_limit:  128m
+    hostname:   redis
+
   api:
     image:      'guimaron/tvmaze-api'
     mem_limit:  128m
+    restart:    always
     hostname:   api
+    ports:
+      - '5000:5000'
+    depends_on:
+      - redis
 
   frontend:
     image:      'guimaron/tvmaze-frontend'

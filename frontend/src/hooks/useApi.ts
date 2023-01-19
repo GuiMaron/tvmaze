@@ -8,7 +8,7 @@ type useApiProps = {
     axiosInstance           : AxiosInstance
 ,   url                     : string
 ,   slowConnectionTimeout   : number
-,   requestConfig          ?: AxiosRequestConfig
+,   requestConfig          ?: Object
 }
 
 
@@ -60,7 +60,7 @@ const useApi = (config : useApiProps) : [ Array<unknown> | unknown, string, stri
             try {
 
                 requestResponse = await axiosInstance.get(
-                    `api/${url}`
+                    `${url}`
                 ,   {
                         ...requestConfig
                     ,   signal:     abortController.signal

@@ -1,0 +1,36 @@
+
+language: generic 
+sudo:     required
+
+services:
+  - docker
+
+before_install:
+  - docker build -t guimaron/tvmaze-frontend-test -f ./frontend/Dockerfile.dev ./frontend
+
+script:
+  # TESTS
+  - docker run -e CI=true guimaron/tvmaze-frontend-test npm test
+
+after_success:
+  # Building Docker images
+  - docker build -t guimaron/tvmaze-api      ./api
+  - docker build -t guimaron/tvmaze-frontend ./frontend
+  - docker build -t guimaron/tvmaze-nginx    ./nginx
+  # Log in to the Docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Pushing images do DockHub
+  - docker push guimaron/tvmaze-api
+  - docker push guimaron/tvmaze-frontend
+  - docker push guimaron/tvmaze-nginx
+deploy:
+  provider: elasticbeanstalk
+  region: 'us-east-1'
+  app: 'tvmaze'
+  env: 'tvmaze'
+  bucket_name: 'elasticbeanstalk-us-east-1-542898700754'
+  bucket_path: 'tvmaze'
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY

@@ -1,42 +1,26 @@
 version:  '3'
 
 services:
- 
-  redis:
-    hostname:   redis
-    image:    'redis:latest'
 
   api:
-    hostname:     api
-    build:
-      dockerfile: 'Dockerfile'
-      context:    './api'
-    restart:  always
-    volumes:
-      - './api:/usr/app'
-      - '/usr/app/node_modules'
-    depends_on:
-      - redis
+    image:      'guimaron/tvmaze-api'
+    mem_limit:  128m
+    hostname:   api
 
   frontend:
-    hostname:     frontend
-    build:
-      dockerfile: 'Dockerfile'
-      context:    './frontend'
-    volumes:
-      - './frontend:/usr/app'
-      - '/usr/app/node_modules'
+    image:      'guimaron/tvmaze-frontend'
+    mem_limit:  128m
+    hostname:   frontend 
     depends_on:
       - api
 
   nginx:
-    hostname:     nginx
-    build:
-      dockerfile: 'Dockerfile'
-      context:    './nginx'
+    image:    'guimaron/tvmaze-nginx'
     restart:  always
     ports:
-      - "80:80"
+      - '80:80'
+    mem_limit:  128m
+    hostname:   nginx
     depends_on:
       - api
       - frontend

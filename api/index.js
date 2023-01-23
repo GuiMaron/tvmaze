@@ -12,6 +12,9 @@ const app = express()
 app.use(cors())
 app.use(bodyParser.json())
 
+//  TO-DO:  remove
+console.log = console.error
+
 
 
 
@@ -46,11 +49,13 @@ app.get(`/api/${ENV.URLS.FULL_SCHEDULE}`, async (request, response) =>
 
 app.get(`/api/${ENV.URLS.SHOW_INFO}`, async (request, response) => 
 {
+    console.log('Get Show Info')
     return (getShowInfo(request, response))
 })
 
 app.get(`/api/${ENV.URLS.SHOW_SEARCH}`, async (request, response) => 
 {
+    console.log('Show Search')
     return (getShowSearch(request, response))
 })
 
@@ -132,7 +137,7 @@ async function cacheData (url, queryParams, data)
         // redisPublisher.publish('insert', url)
     }
     catch (exception) {
-        // return (console.error(exception))
+        return (console.error(exception))
     }
 
 }
@@ -143,7 +148,7 @@ async function getFromCache (url, queryParams, response)
     let cachedData 
     
     //  Trying to get from cache
-    //  console.debug('Retrieving from cache')
+    console.log('Retrieving from cache')
 
     if (queryParams) {
         url = `${url}?${JSON.stringify(queryParams)}`
@@ -164,6 +169,7 @@ async function getFromCache (url, queryParams, response)
         const error = { error: exception }
 
         response.status(500).send(error)
+        console.error(error)
         return ([ true, error ])
 
     }
@@ -191,7 +197,7 @@ async function  getFromApi (url, queryParams, response, abortController)
     let fetchedData 
 
     //  Geting it from TVMaze
-    // console.debug('Retrieving from API')
+    console.log('Retrieving from API')
 
     try {
 
@@ -210,6 +216,7 @@ async function  getFromApi (url, queryParams, response, abortController)
 
             const notFound = circularJSON.stringify({ error: exception?.response?.data })
 
+            console.error(error)
             response.status(404).send(notFound)
             return ([true, notFound])
 

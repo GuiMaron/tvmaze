@@ -10,6 +10,12 @@ A little React implementation to access TVMaze ([http://tvmaze.com](http://tvmaz
 
 
 
+# How to access it online
+
+[Clicking Here](http://tvmaze-env.eba-xbq9kt2p.us-east-1.elasticbeanstalk.com/) will take you to an AWS-based hosted version 
+of this project. The main difference is that a Elasticache Redis instance is used instead of a local one.
+
+
 # How to get the code
 
 ### `git clone https://github.com/GuiMaron/tvmaze.git`
